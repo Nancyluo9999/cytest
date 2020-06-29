@@ -21,32 +21,34 @@ describe('ClinicalInstitution',function() {
     }
 
     function createbutton(){
-
+        cy.get('.ant-card-body .mb-5 >.ant-btn-default').should('contain.text','新增')
         cy.get('.mb-5 >.ant-btn-default').click()
         cy.get('#rcDialogTitle0').contains('場地設置').should('be.visible')
     }
 
-    function createOrUpdatePlace(InstitutionId,SectionId,Name,EnglishName){
+    function createOrUpdatePlace(Name,EnglishName,limitnum){
 
-        cy.get('.ant-modal-body').within(($any) =>{
-            cy.get('form').within(($any)=>{
-                cy.get('div.ant-form-item:nth-child(1)').click()
-                .then('li.ant-select-dropdown-menu-item:nth-child(5)').click()
-                cy.get('div.ant-form-item:nth-child(2)')
-                cy.get('div.ant-form-item:nth-child(3)').clear().type(Name)
-                cy.get('div.ant-form-item:nth-child(4)').clear().type(EnglishName)
-                cy.get('div.ant-form-item:nth-child(5)').clear().type(7)
-                cy.get('div.ant-form-item:nth-child(6)').clear().type(7)
-                cy.get('div.ant-form-item:nth-child(7)').clear().type(7)
-                cy.get('div.ant-form-item:nth-child(8)').clear().type(7)
-                cy.get('div.ant-form-item:nth-child(9)').clear().type(7)
-                cy.get('div.ant-form-item:nth-child(10)').clear().type(7)
-                cy.get('div.ant-form-item:nth-child(11)').clear().type(7)
-                cy.get('div.ant-form-item:nth-child(12)').clear().type(7)
-              
-            })   
-        })
+        cy.get('div.ant-modal-body > form > div:nth-child(1) .select-item > div > div').click()
+        cy.get('.ant-select-dropdown--single:nth-of-type(1)  ul > li').last().should('have.text','澳門鏡湖醫院')
+        cy.get('.ant-select-dropdown--single:nth-of-type(1)  ul > li').last().click()
+        cy.get('div.ant-modal-body > form > div:nth-child(2) .select-item > div > div').click()
+        cy.get('.ant-select-dropdown--single:nth-of-type(1) ul > li').last().should('have.text','社區')
+        cy.get('.ant-select-dropdown--single:nth-of-type(1) ul > li').last().click()
+
+        cy.get('div.ant-form-item:nth-child(3)').type(Name)
+        cy.get('div.ant-form-item:nth-child(4)').type(EnglishName)
+        cy.get('div.ant-row:nth-child(6)  div:nth-child(2) > input:nth-child(1)').clear().type(limitnum)
+        cy.get('div.ant-row:nth-child(7)  div:nth-child(2) > input:nth-child(1)').clear().type(limitnum)
+        cy.get('div.ant-row:nth-child(8)  div:nth-child(2) > input:nth-child(1)').clear().type(limitnum)
+        cy.get('div.ant-row:nth-child(9)  div:nth-child(2) > input:nth-child(1)').clear().type(limitnum)
+        cy.get('div.ant-row:nth-child(10)  div:nth-child(2) > input:nth-child(1)').clear().type(limitnum)
+        cy.get('div.ant-row:nth-child(11)  div:nth-child(2) > input:nth-child(1)').clear().type(limitnum)
+        cy.get('div.ant-row:nth-child(12)  div:nth-child(2) > input:nth-child(1)').clear().type(limitnum)
+        cy.get('div.ant-row:nth-child(13)  div:nth-child(2) > input:nth-child(1)').clear().type(limitnum)
+
         cy.get('.footer > .ant-btn-primary').click()
+
+        cy.get('.ant-message').should('have.text','保存成功')
             
     }
 
@@ -83,21 +85,98 @@ describe('ClinicalInstitution',function() {
     })
     let Seed = Cypress._.random(1, 1000)
     let Name='南希场地—'+Seed
-    let EnglishName='Nancytext—'+Seed
+    let EnglishName='Nancytest—'+Seed
+    
 
-    it.only('create clinical place sucessful',function(){
+    it('create clinical place sucessful',function(){
         openPlaceMenu()
         createbutton()
-        createOrUpdatePlace(Name,EnglishName)
-        
-
+        const limitnum =9
+        createOrUpdatePlace(Name,EnglishName,limitnum)
 
 
     })
 
+    function searchByName(name){
+        cy.get('div.search-bar-item:nth-child(3) > div:nth-child(1) > div:nth-child(2) > input:nth-child(1)').clear().type(name)
+        cy.get('div.search-bar-item:nth-child(4)').should('contain.text','查 詢')
+        cy.get('div.search-bar-item:nth-child(4)').click()
+
+    }
+
+    it('search place by name',function(){
+        openPlaceMenu()
+        searchByName(Name)
+        cy.get('.ant-table-row > td:nth-child(4)').should('have.text',Name)
 
 
+    })
+
+    // 修改场地状态为停用
+   it('update instructor status to enbaled',function() {
+    openPlaceMenu()
+    searchByName(Name)
+    cy.get('.ant-table-row > td:nth-child(4)').should('have.text',Name)
+    cy.get('.mr-20').contains('啟用').click()
+    
+    cy.get('div.ant-modal-content  .ant-modal-confirm-body .ant-modal-confirm-title').should('have.text','停用場地')
+    cy.get('div.ant-modal-content  .ant-modal-confirm-body  .ant-modal-confirm-content').should('have.text','確認停用場地？')
+
+    cy.get('.ant-modal-confirm-btns >.ant-btn-primary').click()
+    cy.get('.mr-20').contains('停用')
+
+    
+})
+
+let new_Name='new_南希场地—'+Seed
+let new_EnglishName='new_Nancytest—'+Seed
+
+it('update the created place', function(){
+    const limitnum = 8
+    openPlaceMenu()
+    searchByName(Name)
+    cy.wait(1000)
+    cy.get('td:nth-child(15) > .mr-10.ant-btn-primary').click()
+    // cy.get('.ant-table-row .td:nth-child(15) > .mr-10.ant-btn-primary').click()
+    cy.get('#rcDialogTitle0').contains('場地設置').should('be.visible')
+
+    cy.get('.ant-modal-body').within(($any) =>{
+          
+        cy.get('div.ant-form-item:nth-child(3) input:nth-child(1)').clear().type(new_Name)
+        cy.get('div.ant-form-item:nth-child(4) input:nth-child(1)').clear().type(new_EnglishName)
+        cy.get('div.ant-row:nth-child(6)  div:nth-child(2) > input:nth-child(1)').clear().type(limitnum)
+        cy.get('div.ant-row:nth-child(7)  div:nth-child(2) > input:nth-child(1)').clear().type(limitnum)
+        cy.get('div.ant-row:nth-child(8)  div:nth-child(2) > input:nth-child(1)').clear().type(limitnum)
+        cy.get('div.ant-row:nth-child(9)  div:nth-child(2) > input:nth-child(1)').clear().type(limitnum)
+        cy.get('div.ant-row:nth-child(10)  div:nth-child(2) > input:nth-child(1)').clear().type(limitnum)
+        cy.get('div.ant-row:nth-child(11)  div:nth-child(2) > input:nth-child(1)').clear().type(limitnum)
+        cy.get('div.ant-row:nth-child(12)  div:nth-child(2) > input:nth-child(1)').clear().type(limitnum)
+        cy.get('div.ant-row:nth-child(13)  div:nth-child(2) > input:nth-child(1)').clear().type(limitnum)
+      
+        })
 
 
+    cy.get('.footer > .ant-btn-primary').click()
+    cy.get('.ant-message').should('have.text','保存成功')
+
+    cy.get('.ant-table-row > td:nth-child(4)').should('have.text',new_Name)
+
+
+})
+
+
+it('delete the created place', function(){
+    openPlaceMenu()
+    searchByName(new_Name)
+    cy.wait(1000)
+    cy.get('.ant-btn-danger').click()
+    cy.get('.ant-modal-body   .ant-modal-confirm-body  .ant-modal-confirm-title').should('have.text','刪除場地')
+    cy.get('.ant-modal-body   .ant-modal-confirm-body  .ant-modal-confirm-content').should('have.text','確認要刪除場地？')
+    cy.get('.ant-modal-body  .ant-modal-confirm-btns > .ant-btn-primary').click()
+    cy.get('.ant-message').should('have.text','刪除成功')
+
+    cy.get('.ant-table-placeholder').should('have.text','目前尚無資料')
+
+})
 
 })

@@ -27,3 +27,15 @@ export function logout(){
     })
 
 }
+
+
+export function Dorm_login() {
+    cy.visit('http://urp-dev-kwn.tronclass.com.cn/dormitorymanagement.web/#/login')
+    cy.get('#UserId').type('wgtest')
+    cy.get('#UserPassword').type('wisd@mgarden')
+    cy.get('.ant-btn').click()
+    cy.wait(1000)
+    cy.getCookie('.AspNet.ApplicationCookie').should('exist')
+    cy.url().should('include', '/dormitorymanagement.web/#/home')
+    cy.get('div.layout-content.ant-layout-content  div > h2').should('have.text','歡迎使用 宿舍管理系統')   
+}
