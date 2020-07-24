@@ -1,5 +1,5 @@
 export function Clinical_login() {
-    cy.visit('http://urp-dev-kwn.tronclass.com.cn/clinicalpractice.web/#/login')
+    cy.visit('/clinicalpractice.web/#/login')
     cy.get('#UserId').type('wgtest')
     cy.get('#UserPassword').type('wisd@mgarden')
     cy.get('.ant-btn').click()
@@ -21,7 +21,7 @@ export function Clinical_logout() {
 }
 
 export function logout(){
-    cy.request('DELETE', 'http://urp-dev-kwn.tronclass.com.cn/clinicalpractice.web/api/Login')
+    cy.request('DELETE', '/clinicalpractice.web/api/Login')
     .then((Response)=>{
         expect(Response.status).to.eq(204)
     })
@@ -30,7 +30,7 @@ export function logout(){
 
 
 export function Dorm_login() {
-    cy.visit('http://urp-dev-kwn.tronclass.com.cn/dormitorymanagement.web/#/login')
+    cy.visit('/dormitorymanagement.web/#/login')
     cy.get('#UserId').type('wgtest')
     cy.get('#UserPassword').type('wisd@mgarden')
     cy.get('.ant-btn').click()

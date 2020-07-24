@@ -1,7 +1,9 @@
 {
-    
+    "baseUrl":"http://urp-qa-kwn.tronclass.com.cn",
     "viewportWidth": 1000,
-    "viewportHeight": 660
+    "viewportHeight": 660,
+    "integrationFolder": "cypress/integration/urp_kwn",
+    "testFiles": "**/*.js"
     
 
 }
